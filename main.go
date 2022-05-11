@@ -1,7 +1,6 @@
 package main
 
 import (
-	"PDDiktiProxyAPI/Modules/ServerCaches"
 	"fmt"
 	"github.com/joho/godotenv"
 	"log"
@@ -20,20 +19,6 @@ func main() {
 		port      string = os.Getenv("PORT")
 		address   string = fmt.Sprintf("%v:%v", ipaddress, port)
 	)
-
-	// Gocron example
-	//location, _ := time.LoadLocation("Asia/Jakarta")
-	//x := gocron.NewScheduler(location)
-	//
-	//x.Every(1).Day().At("08:54").Do(func() {
-	//	log.Print("Hello!")
-	//})
-	//
-	//x.StartAsync()
-
-	test := ServerCaches.FetchUniversities()
-
-	log.Print(test)
 
 	log.Fatal(RunServer(address))
 }

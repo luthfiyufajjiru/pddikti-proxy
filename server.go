@@ -1,6 +1,8 @@
 package main
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+)
 
 func RunServer(address string) error {
 	app := fiber.New()
@@ -8,8 +10,14 @@ func RunServer(address string) error {
 	//api := app.Group("/api")
 
 	//v1collection := api.Group("/v1")
-
 	//v1collection.Mount("/v1/users", Account.GetRoutesV1(h))
+
+	//app.Server().GetOpenConnectionsCount()
+
+	//location, _ := time.LoadLocation("Asia/Jakarta")
+	//x := gocron.NewScheduler(location)
+	//x.Every(1).Day().At("05:51").Do(ServerCaches.CleanUniversities)
+	//x.StartAsync()
 
 	return app.Listen(address)
 }
