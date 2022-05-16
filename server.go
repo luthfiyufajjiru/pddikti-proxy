@@ -1,16 +1,17 @@
 package main
 
 import (
+	"PDDiktiProxyAPI/Modules/PerguruanTinggi"
 	"github.com/gofiber/fiber/v2"
 )
 
 func RunServer(address string) error {
 	app := fiber.New()
 
-	//api := app.Group("/api")
+	api := app.Group("/api")
 
-	//v1collection := api.Group("/v1")
-	//v1collection.Mount("/v1/users", Account.GetRoutesV1(h))
+	v1collection := api.Group("/v1")
+	v1collection.Mount("/perguruan-tinggi", PerguruanTinggi.GetRoutesV1())
 
 	//app.Server().GetOpenConnectionsCount()
 

@@ -28,6 +28,11 @@ func GetLoadPtUrl() (result string) {
 	return
 }
 
+func GetProvinsiUrl() (result string) {
+	result = fmt.Sprintf("%s/get_provinsi", *GetBaseUri())
+	return
+}
+
 func GetListProdiUrl(id string) (result string) {
 	result = fmt.Sprintf("%s/v2/detail_pt_prodi/%s", *GetBaseUri(), id)
 	return

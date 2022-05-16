@@ -4,20 +4,26 @@ import (
 	"PDDiktiProxyAPI/Modules/PerguruanTinggi/DataTransferObjects"
 	"encoding/json"
 	"github.com/go-co-op/gocron"
-	"github.com/gofiber/fiber/v2"
+	"log"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 )
 
 var (
-	ptMutex      *sync.RWMutex
-	universities []DataTransferObjects.PerguruanTinggiDTO
+	ptMutex             *sync.RWMutex
+	univsSchedulerMutex *sync.RWMutex
+	univsScheduler      *gocron.Scheduler
+	universities        []DataTransferObjects.PerguruanTinggiDTO
+	location            *time.Location
+	startAt             time.Time
 )
 
 func init() {
 	ptMutex = &sync.RWMutex{}
+	univsSchedulerMutex = &sync.RWMutex{}
+	location, _ = time.LoadLocation("Asia/Jakarta")
+	startAt = time.Now().In(location)
 }
 
 func fetchUniversities() (results []DataTransferObjects.PerguruanTinggiDTO) {
@@ -29,7 +35,55 @@ func fetchUniversities() (results []DataTransferObjects.PerguruanTinggiDTO) {
 	return
 }
 
-func GetUniversities() (results *[]DataTransferObjects.PerguruanTinggiDTO) {
+func cleanUniversities() {
+	ptMutex.Lock()
+	defer ptMutex.Unlock()
+	universities = nil
+}
+
+func universitiesWatcherTask() {
+	univsSchedulerMutex.RLock()
+	_started := &startAt
+	univsSchedulerMutex.RUnlock()
+	if n := time.Now().Sub(*_started).Minutes(); n > 30 {
+		cleanUniversities()
+		univsScheduler.Stop()
+	}
+}
+
+func universitiesWatcher() error {
+	univsSchedulerMutex.Lock()
+	{
+		startAt = time.Now()
+		if univsScheduler == nil {
+			univsScheduler = gocron.NewScheduler(location)
+			_, err := univsScheduler.Every(1).Second().Do(universitiesWatcherTask)
+			for err != nil {
+				started := time.Now()
+				log.Print(err)
+				_, err = univsScheduler.Every(1).Second().Do(universitiesWatcherTask)
+				if started.Sub(time.Now()).Seconds() > 2 {
+					log.Printf("%s could not be resolved, please call administrator!", err)
+					return err
+				}
+			}
+			univsScheduler.StartAsync()
+		}
+	}
+	univsSchedulerMutex.Unlock()
+	if univsScheduler != nil && !univsScheduler.IsRunning() {
+		univsSchedulerMutex.Lock()
+		univsScheduler.StartAsync()
+		univsSchedulerMutex.Unlock()
+	}
+
+	return nil
+}
+
+func GetUniversities() (results *[]DataTransferObjects.PerguruanTinggiDTO, err error) {
+	defer func() {
+		err = universitiesWatcher()
+	}()
 	if universities == nil {
 		_result := fetchUniversities()
 		ptMutex.Lock()
@@ -41,40 +95,4 @@ func GetUniversities() (results *[]DataTransferObjects.PerguruanTinggiDTO) {
 	results = &universities
 	ptMutex.RUnlock()
 	return
-}
-
-func GetUniversity(input string) (result DataTransferObjects.PerguruanTinggiDTO) {
-	universities := GetUniversities()
-	defer func() {
-		universities = nil
-	}()
-	for _, val := range *universities {
-		if x, y := strings.ToLower(val.NamaPt), strings.ToLower(input); x == y {
-			result = val
-			return
-		}
-	}
-	return
-}
-
-func cleanUniversities() {
-	ptMutex.Lock()
-	defer ptMutex.Unlock()
-	universities = nil
-}
-
-func universitiesWatcher(app *fiber.App) {
-	location, _ := time.LoadLocation("Asia/Jakarta")
-	startAt := time.Now().In(location)
-	x := gocron.NewScheduler(location)
-	x.Every(1).Second().Do(func() {
-		if n := app.Server().GetOpenConnectionsCount(); n > 0 {
-			startAt = time.Now()
-		}
-		if n := startAt.Sub(time.Now().In(location)).Minutes(); n > 30 {
-			cleanUniversities()
-			x.Stop()
-		}
-	})
-	x.StartAsync()
 }
