@@ -5,7 +5,7 @@ Proyek ini merupakan eksperimen _fine tuning_ pribadi dari API PDDikti yang asli
 
 - Server caching that significantly improve similar request
 - Additional filtering
-- Personalized Rest API URL Pattern
+- Personalized Rest API URL pattern
 ## Dokumentasi API
 
 #### Daftar Perguruan Tinggi
