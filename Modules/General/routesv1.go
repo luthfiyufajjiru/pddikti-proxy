@@ -1,7 +1,7 @@
-package PerguruanTinggi
+package General
 
 import (
-	"PDDiktiProxyAPI/Modules/PerguruanTinggi/Handlers"
+	"PDDiktiProxyAPI/Modules/General/Handlers"
 	"github.com/gofiber/fiber/v2"
 )
 

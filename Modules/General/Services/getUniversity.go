@@ -1,7 +1,7 @@
 package Services
 
 import (
-	"PDDiktiProxyAPI/Modules/PerguruanTinggi/DataTransferObjects"
+	"PDDiktiProxyAPI/Modules/General/DataTransferObjects"
 	"PDDiktiProxyAPI/Modules/ServerCaches"
 	"strings"
 )

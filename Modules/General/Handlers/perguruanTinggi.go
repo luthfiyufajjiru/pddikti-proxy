@@ -1,8 +1,8 @@
 package Handlers
 
 import (
-	"PDDiktiProxyAPI/Modules/PerguruanTinggi/DataTransferObjects"
-	"PDDiktiProxyAPI/Modules/PerguruanTinggi/Services"
+	"PDDiktiProxyAPI/Modules/General/DataTransferObjects"
+	"PDDiktiProxyAPI/Modules/General/Services"
 	Services2 "PDDiktiProxyAPI/Modules/Search/Services"
 	"PDDiktiProxyAPI/Modules/ServerCaches"
 	"github.com/gofiber/fiber/v2"

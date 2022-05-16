@@ -5,7 +5,7 @@ import (
 )
 
 type PerguruanTinggiDTO struct {
-	IdSp   string `json:"id_sp",`
+	IdSp   string `json:"id_sp"`
 	KodePt string `json:"kode_pt"`
 	NamaPt string `json:"nama_pt"`
 }

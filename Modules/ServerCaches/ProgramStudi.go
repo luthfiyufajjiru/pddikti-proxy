@@ -1,7 +1,7 @@
 package ServerCaches
 
 import (
-	"PDDiktiProxyAPI/Modules/PerguruanTinggi/DataTransferObjects"
+	"PDDiktiProxyAPI/Modules/General/DataTransferObjects"
 	"encoding/base64"
 	"encoding/json"
 	"net/http"
