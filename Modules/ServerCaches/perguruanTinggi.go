@@ -4,7 +4,6 @@ import (
 	"PDDiktiProxyAPI/Modules/General/DataTransferObjects"
 	"encoding/json"
 	"github.com/go-co-op/gocron"
-	"log"
 	"net/http"
 	"sync"
 	"time"
@@ -24,6 +23,8 @@ func init() {
 	univsSchedulerMutex = &sync.RWMutex{}
 	location, _ = time.LoadLocation("Asia/Jakarta")
 	ptStartAt = time.Now().In(location)
+	univsScheduler = gocron.NewScheduler(location)
+	_, _ = univsScheduler.Every(1).Second().Do(WatcherTask(&ptStartAt, 30, cleanUniversities, univsSchedulerMutex, univsScheduler))
 }
 
 func fetchUniversities() (results []DataTransferObjects.PerguruanTinggiDTO) {
@@ -41,43 +42,9 @@ func cleanUniversities() {
 	universities = nil
 }
 
-func universitiesWatcherTask() {
-	univsSchedulerMutex.RLock()
-	_started := &ptStartAt
-	univsSchedulerMutex.RUnlock()
-	if n := time.Now().Sub(*_started).Minutes(); n > 30 {
-		cleanUniversities()
-		univsScheduler.Stop()
-	}
-}
-
 func universitiesWatcher() error {
-	univsSchedulerMutex.Lock()
-	{
-		ptStartAt = time.Now()
-		if univsScheduler == nil {
-			univsScheduler = gocron.NewScheduler(location)
-			_, err := univsScheduler.Every(1).Second().Do(universitiesWatcherTask)
-			for err != nil {
-				started := time.Now()
-				log.Print(err)
-				_, err = univsScheduler.Every(1).Second().Do(universitiesWatcherTask)
-				if started.Sub(time.Now()).Seconds() > 2 {
-					log.Printf("%s could not be resolved, please call administrator!", err)
-					return err
-				}
-			}
-			univsScheduler.StartAsync()
-		}
-	}
-	univsSchedulerMutex.Unlock()
-	if univsScheduler != nil && !univsScheduler.IsRunning() {
-		univsSchedulerMutex.Lock()
-		univsScheduler.StartAsync()
-		univsSchedulerMutex.Unlock()
-	}
-
-	return nil
+	err := Watcher(&ptStartAt, univsSchedulerMutex, univsScheduler)
+	return err
 }
 
 func GetUniversities() (results *[]DataTransferObjects.PerguruanTinggiDTO, err error) {
