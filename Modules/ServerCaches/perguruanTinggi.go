@@ -16,14 +16,14 @@ var (
 	univsScheduler      *gocron.Scheduler
 	universities        []DataTransferObjects.PerguruanTinggiDTO
 	location            *time.Location
-	startAt             time.Time
+	ptStartAt           time.Time
 )
 
 func init() {
 	ptMutex = &sync.RWMutex{}
 	univsSchedulerMutex = &sync.RWMutex{}
 	location, _ = time.LoadLocation("Asia/Jakarta")
-	startAt = time.Now().In(location)
+	ptStartAt = time.Now().In(location)
 }
 
 func fetchUniversities() (results []DataTransferObjects.PerguruanTinggiDTO) {
@@ -43,7 +43,7 @@ func cleanUniversities() {
 
 func universitiesWatcherTask() {
 	univsSchedulerMutex.RLock()
-	_started := &startAt
+	_started := &ptStartAt
 	univsSchedulerMutex.RUnlock()
 	if n := time.Now().Sub(*_started).Minutes(); n > 30 {
 		cleanUniversities()
@@ -54,7 +54,7 @@ func universitiesWatcherTask() {
 func universitiesWatcher() error {
 	univsSchedulerMutex.Lock()
 	{
-		startAt = time.Now()
+		ptStartAt = time.Now()
 		if univsScheduler == nil {
 			univsScheduler = gocron.NewScheduler(location)
 			_, err := univsScheduler.Every(1).Second().Do(universitiesWatcherTask)

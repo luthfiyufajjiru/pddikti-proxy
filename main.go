@@ -19,6 +19,5 @@ func main() {
 		port      string = os.Getenv("PORT")
 		address   string = fmt.Sprintf("%v:%v", ipaddress, port)
 	)
-
 	log.Fatal(RunServer(address))
 }

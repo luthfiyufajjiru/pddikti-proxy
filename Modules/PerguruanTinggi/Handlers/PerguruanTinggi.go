@@ -7,6 +7,7 @@ import (
 	"PDDiktiProxyAPI/Modules/ServerCaches"
 	"github.com/gofiber/fiber/v2"
 	"net/http"
+	"strings"
 )
 
 func GetUniversities() fiber.Handler {
@@ -23,16 +24,31 @@ func GetUniversities() fiber.Handler {
 	}
 }
 
-func GetUniversityByKodePt() fiber.Handler {
+func GetUniversity() fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
-		kodePt := ctx.Params("query")
+		query := ctx.Params("query")
+		mode := ctx.Params("mode")
+
+		if x := strings.ToLower(mode); x != "k" && x != "n" {
+			return fiber.NewError(http.StatusNotFound)
+		}
+
 		var emptyUni DataTransferObjects.PerguruanTinggiDTO
 
-		if kodePt == "" {
+		if query == "" {
 			return fiber.NewError(http.StatusBadRequest, "kode perguruan tinggi tidak boleh kosong!")
 		}
 
-		result, err := Services.GetUniversity(kodePt)
+		var (
+			result DataTransferObjects.PerguruanTinggiDTO
+			err    error
+		)
+
+		if x := strings.ToLower(mode); x == "k" {
+			result, err = Services.GetUniversityByKode(query)
+		} else if x == "n" {
+			result, err = Services.GetUniversityByName(query)
+		}
 
 		if err != nil {
 			return fiber.NewError(http.StatusInternalServerError, err.Error())
@@ -61,5 +77,20 @@ func SearchUniversitiesByName() fiber.Handler {
 
 		return ctx.JSON(results)
 
+	}
+}
+
+func GetProdi() fiber.Handler {
+	return func(ctx *fiber.Ctx) error {
+		query := ctx.Params("query")
+		_pt, err := Services.GetUniversityByKode(query)
+		query = strings.ReplaceAll(_pt.IdSp, " ", "")
+		result := ServerCaches.GetProdi(query)
+		if err != nil {
+			return fiber.NewError(http.StatusBadRequest, err.Error())
+		} else if result == nil {
+			return fiber.NewError(http.StatusNoContent)
+		}
+		return ctx.JSON(result)
 	}
 }
