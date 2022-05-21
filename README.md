@@ -51,7 +51,7 @@ https://postman.com/noobscoder/workspace/pddikti-proxy
 
 ## Acknowledgements
 
- - [Situs PDDikti asli](https://pddikti.kemdikbud.go.id/)
+ - [Original PDDikti site](https://pddikti.kemdikbud.go.id/)
  
 ## Tech Stack
 
