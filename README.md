@@ -1,55 +1,58 @@
+
 # PDDikti Proxy API
 
-Proyek ini merupakan eksperimen _fine tuning_ pribadi dari API PDDikti yang asli.
+This is a proxy API from the original PDDikti API with custom Rest Api personalized url pattern and some optimizations.
 ## Optimizations
 
 - Server caching that significantly improve similar request
 - Additional filtering
-- Personalized Rest API URL pattern
-## Dokumentasi API
+- Personalized Rest API URL Pattern
+## API Documentation
+https://postman.com/noobscoder/workspace/pddikti-proxy
 
-#### Daftar Perguruan Tinggi
+#### Get Universities
 
 ```http
-  GET /api/v1/perguruan-tinggi
+  GET /api/v1/universities
 ```
 
-#### Data Tunggal Perguruan Tinggi
+#### Get University
 
 ```http
-  GET /api/v1/perguruan-tinggi/:mode/:query
+  GET /api/v1/university/:mode/:query
 ```
 
-| Parameter | Type     | Description                                         |
-| :-------- | :------- | :---------------------------------------------------|
-| `mode`    | `string` | `{k : Berdasarkan kode_pt, n : Berdasarkan nama_pt}`|
-| `query`   | `string` |                                                     |
+| Parameter | Type     | Description                                                          |
+| :-------- | :------- | :--------------------------------------------------------------------|
+| `mode`    | `string` | `{c : kode_pt (university's code), n : nama_pt (university's name) }`|
+| `query`   | `string` |                                                                      |
 
-#### Cari Perguruan Tinggi Berdasarkan Nama
+#### Search by University's Name
 
 ```http
-  GET /api/v1/perguruan-tinggi/search/:query
+  GET /api/v1/university/search/:query
 ```
 
 | Parameter | Type     | Description |
 | :-------- | :------- | :-----------|
 | `query`   | `string` |             |
 
-#### Daftar Prodi Perguruan Tinggi
+#### University's Majors
 
 ```http
-  GET /api/v1/perguruan-tinggi/k/:query/daftar-prodi
+  GET /api/v1/university/k/:query/majors
 ```
 
-| Parameter | Type     | Description                |
-| :-------- | :------- | :--------------------------|
-| `mode`    | `string` | `{k : Berdasarkan kode_pt}`|
-| `query`   | `string` |                            |
+| Parameter | Type     | Description                        |
+| :-------- | :------- | :----------------------------------|
+| `mode`    | `string` | `{c : kode_pt (university's code)}`|
+| `query`   | `string` |                                    |
 
 
 ## Acknowledgements
 
  - [Situs PDDikti asli](https://pddikti.kemdikbud.go.id/)
+ 
 ## Tech Stack
 
 Golang with GoFiber API Framework
