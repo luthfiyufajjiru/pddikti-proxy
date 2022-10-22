@@ -7,9 +7,9 @@ import (
 
 func GetRoutesV1() (routes *fiber.App) {
 	routes = fiber.New()
-	routes.Get("", Handlers.GetUniversities())
-	routes.Get("/search/:query", Handlers.SearchUniversitiesByName())
-	routes.Get("/:mode/:query", Handlers.GetUniversity())
-	routes.Get("/k/:query/daftar-prodi", Handlers.GetProdi())
+	routes.Get("/universities", Handlers.GetUniversities())
+	routes.Get("/university/search/:query", Handlers.SearchUniversitiesByName())
+	routes.Get("/university/:mode/:query", Handlers.GetUniversity())
+	routes.Get("/university/c/:query/majors", Handlers.GetProdi())
 	return
 }

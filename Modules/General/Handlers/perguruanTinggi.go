@@ -29,7 +29,7 @@ func GetUniversity() fiber.Handler {
 		query := ctx.Params("query")
 		mode := ctx.Params("mode")
 
-		if x := strings.ToLower(mode); x != "k" && x != "n" {
+		if x := strings.ToLower(mode); x != "c" && x != "n" {
 			return fiber.NewError(http.StatusNotFound)
 		}
 
@@ -44,7 +44,7 @@ func GetUniversity() fiber.Handler {
 			err    error
 		)
 
-		if x := strings.ToLower(mode); x == "k" {
+		if x := strings.ToLower(mode); x == "c" {
 			result, err = Services.GetUniversityByKode(query)
 		} else if x == "n" {
 			result, err = Services.GetUniversityByName(query)

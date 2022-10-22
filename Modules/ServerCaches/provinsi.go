@@ -45,9 +45,19 @@ func provinsiWatcher() error {
 	return err
 }
 
-func GetProvinsi() {
+func GetProvinsi() (results *[]DataTransferObjects.ProvinsiDTO, err error) {
 	defer func() {
 		_ = provinsiWatcher()
 	}()
-	_ = fetchProvinsi()
+	provinsiMutex.RLock()
+	if daftarProvinsi == nil {
+		provinsiMutex.RUnlock()
+		provinsiMutex.Lock()
+		daftarProvinsi = fetchProvinsi()
+		results = &daftarProvinsi
+		provinsiMutex.Unlock()
+	} else if daftarProvinsi != nil {
+
+	}
+	return
 }

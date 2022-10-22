@@ -11,7 +11,7 @@ func RunServer(address string) error {
 	api := app.Group("/api")
 
 	v1collection := api.Group("/v1")
-	v1collection.Mount("/perguruan-tinggi", General.GetRoutesV1())
+	v1collection.Mount("/", General.GetRoutesV1())
 
 	//app.Server().GetOpenConnectionsCount()
 

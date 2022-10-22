@@ -51,15 +51,16 @@ func GetUniversities() (results *[]DataTransferObjects.PerguruanTinggiDTO, err e
 	defer func() {
 		err = universitiesWatcher()
 	}()
-	if universities == nil {
-		_result := fetchUniversities()
-		ptMutex.Lock()
-		universities = _result
-		ptMutex.Unlock()
-		_result = nil
-	}
 	ptMutex.RLock()
-	results = &universities
-	ptMutex.RUnlock()
+	if universities == nil {
+		ptMutex.RUnlock()
+		ptMutex.Lock()
+		universities = fetchUniversities()
+		results = &universities
+		ptMutex.Unlock()
+	} else if universities != nil {
+		results = &universities
+		ptMutex.RUnlock()
+	}
 	return
 }
